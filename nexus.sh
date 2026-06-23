@@ -1,18 +1,30 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-cd "$(dirname "$0")"
+source ./nexus_core_v5.sh
+source ./nexus_override.sh
 
-echo "[NEXUS] diretório atual: $(pwd)"
+echo "[NEXUS] pronto para comandos em linguagem natural"
+echo "Ex: criar site, mudar título para X, adicionar botão"
 
-if [ ! -d ".git" ]; then
-    echo "[NEXUS] inicializando repo..."
-    git init
-    git branch -M main
-    git remote add origin https://github.com/Olnair2932/web_base.git
-fi
+while true; do
+  read -p "NEXUS> " CMD
 
-echo "[NEXUS] sincronizando..."
-git add .
-git commit -m "nexus auto update" || echo "sem mudanças para commit"
-git pull origin main --rebase
-git push origin main
+  if [[ "$CMD" == *"sair"* ]]; then
+    echo "Nexus encerrado"
+    break
+  fi
+
+  # converte linguagem natural para ações simples
+  if [[ "$CMD" == *"site"* ]]; then
+    execute_action "create_site"
+  elif [[ "$CMD" == *"título"* ]]; then
+    VALUE=$(echo "$CMD" | sed 's/.*para //')
+    execute_action "set_title" "$VALUE"
+  elif [[ "$CMD" == *"botão"* ]]; then
+    VALUE=$(echo "$CMD" | sed 's/.*botão //')
+    execute_action "add_button" "$VALUE"
+  else
+    echo "[NEXUS] comando não reconhecido"
+  fi
+
+done
