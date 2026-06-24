@@ -179,5 +179,12 @@ document.getElementById("shareBtn").addEventListener("click", async () => {
 });
 </script>
 
+<script>
+history.pushState(null, null, location.href);
+window.addEventListener("popstate", function () {
+  history.pushState(null, null, location.href);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script>
 </body>
 </html>
