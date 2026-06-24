@@ -1,21 +1,31 @@
-
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ateliê Crochê Artesanal</title><style>
+
+<title>Kellen do Crochê</title>
+
+<style>
 body{
   font-family: Arial, sans-serif;
   margin:0;
-  background:#f8f5f2;
+  background:#ffc0cb;
   color:#333;
 }
 
 header{
-  background:#d98c5f;
+  background:#ff69b4;
   color:white;
   text-align:center;
   padding:30px;
+}
+
+.top-actions{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:15px;
 }
 
 .produtos{
@@ -35,49 +45,114 @@ header{
   text-align:center;
 }
 
-.card img{
-  width:100%;
-  border-radius:8px;
-}
-
 .preco{
   font-size:22px;
-  color:#d98c5f;
+  color:#ff69b4;
   font-weight:bold;
 }
 
 button{
-  background:#d98c5f;
+  background:#ff1493;
   color:white;
   border:none;
   padding:12px 20px;
   border-radius:6px;
   cursor:pointer;
+  font-weight:bold;
+  margin-top:5px;
 }
 
 button:hover{
-  background:#bf7448;
+  background:#c71585;
 }
-</style></head><body><header>
-<h1>Ateliê Crochê Artesanal</h1>
-<p>Peças feitas à mão com carinho e qualidade</p>
-</header><section class="produtos"><div class="card">
+
+/* Botão flutuante voltar ao topo */
+#topBtn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#ff1493;
+  border:none;
+  color:white;
+  padding:12px 15px;
+  border-radius:50%;
+  font-size:18px;
+  cursor:pointer;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Kellen do Crochê</h1>
+<p>Peças artesanais feitas com amor 💖</p>
+</header>
+
+<div class="top-actions">
+<button onclick="shareSite()">📲 Compartilhar site</button>
+</div>
+
+<section class="produtos">
+
+<div class="card">
 <h2>Bolsa de Crochê</h2>
 <p class="preco">R$ 89,90</p>
-<button onclick="alert('Produto adicionado ao pedido!')">
-Comprar
-</button>
-</div><div class="card">
+<a href="https://wa.me/5551984578173?text=Quero%20comprar%20a%20Bolsa%20de%20Crochê" target="_blank">
+<button>Comprar por WhatsApp</button>
+</a>
+</div>
+
+<div class="card">
 <h2>Sousplat Artesanal</h2>
 <p class="preco">R$ 29,90</p>
-<button onclick="alert('Produto adicionado ao pedido!')">
-Comprar
-</button>
-</div><div class="card">
+<a href="https://wa.me/5551984578173?text=Quero%20comprar%20o%20Sousplat%20Artesanal" target="_blank">
+<button>Comprar por WhatsApp</button>
+</a>
+</div>
+
+<div class="card">
 <h2>Tapete de Crochê</h2>
 <p class="preco">R$ 149,90</p>
-<button onclick="alert('Produto adicionado ao pedido!')">
-Comprar
-</button>
-</div></section></body>
+<a href="https://wa.me/5551984578173?text=Quero%20comprar%20o%20Tapete%20de%20Crochê" target="_blank">
+<button>Comprar por WhatsApp</button>
+</a>
+</div>
+
+</section>
+
+<!-- Botão voltar ao topo -->
+<button id="topBtn" onclick="scrollToTop()">⬆</button>
+
+<script>
+// Compartilhar site (API nativa Android/Web)
+function shareSite(){
+  if(navigator.share){
+    navigator.share({
+      title: 'Kellen do Crochê',
+      text: 'Confira esse site de crochê artesanal 💖',
+      url: window.location.href
+    });
+  } else {
+    alert("Compartilhamento não suportado neste navegador");
+  }
+}
+
+// Botão voltar ao topo
+window.onscroll = function(){
+  const btn = document.getElementById("topBtn");
+  if(document.documentElement.scrollTop > 200){
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+};
+
+function scrollToTop(){
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+</body>
 </html>
