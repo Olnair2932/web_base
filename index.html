@@ -65,7 +65,37 @@ button{
 button:hover{
   background:#c71585;
 }
+
+/* BOTÃO VOLTAR AO TOPO */
+#topBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #ff1493;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 50px;
+  cursor: pointer;
+  display: none;
+  z-index: 999;
+}
+
+/* BOTÃO COMPARTILHAR */
+#shareBtn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: #ff69b4;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 50px;
+  cursor: pointer;
+  z-index: 999;
+}
 </style>
+
 </head>
 
 <body>
@@ -77,7 +107,6 @@ button:hover{
 
 <section class="produtos">
 
-<!-- CARD COM FOTO -->
 <div class="card">
 <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf" alt="Bolsa de Crochê">
 
@@ -89,10 +118,10 @@ button:hover{
 </a>
 </div>
 
-<!-- OUTROS PRODUTOS -->
 <div class="card">
 <h2>Sousplat Artesanal</h2>
 <p class="preco">R$ 29,90</p>
+
 <a href="https://wa.me/5551984578173?text=Quero%20comprar%20o%20Sousplat%20Artesanal" target="_blank">
 <button>Comprar por WhatsApp</button>
 </a>
@@ -101,12 +130,52 @@ button:hover{
 <div class="card">
 <h2>Tapete de Crochê</h2>
 <p class="preco">R$ 149,90</p>
+
 <a href="https://wa.me/5551984578173?text=Quero%20comprar%20o%20Tapete%20de%20Crochê" target="_blank">
 <button>Comprar por WhatsApp</button>
 </a>
 </div>
 
 </section>
+
+<!-- BOTÕES FLUTUANTES -->
+<button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+↑ Topo
+</button>
+
+<button id="shareBtn">Compartilhar</button>
+
+<script>
+// botão voltar ao topo
+window.onscroll = function () {
+  const btn = document.getElementById("topBtn");
+
+  if (document.documentElement.scrollTop > 200) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+};
+
+// compartilhar site (Android / Web Share API)
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  const shareData = {
+    title: "Kellen do Crochê",
+    text: "Confira essas peças artesanais incríveis 💖",
+    url: window.location.href
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {
+      console.log("Compartilhamento cancelado", err);
+    }
+  } else {
+    alert("Seu navegador não suporta compartilhamento nativo.");
+  }
+});
+</script>
 
 </body>
 </html>
