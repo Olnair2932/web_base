@@ -7,7 +7,7 @@ read -p "Preço (ex: 99,90): " PRECO
 read -p "URL da imagem: " IMG
 read -p "Link WhatsApp: " LINK
 
-CARD=$(cat <<EOF
+CARD=$(cat <<EOC
 
 <div class="card">
 <img src="$IMG" alt="$NOME">
@@ -20,10 +20,10 @@ CARD=$(cat <<EOF
 </a>
 </div>
 
-EOF
+EOC
 )
 
-# insere antes do fechamento da section produtos
-sed -i "/<\/section>/i $CARD" "$ARQUIVO"
+# evita quebra de linha no sed (versão mais segura)
+echo "$CARD" | sed ':a;N;$!ba;s/\n/\\n/g' | sed "/<\/section>/i $CARD" "$ARQUIVO"
 
-echo "Produto adicionado com sucesso!"
+echo "✔ Produto adicionado com sucesso!"
