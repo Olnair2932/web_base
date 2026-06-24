@@ -1,17 +1,83 @@
-<!DOCTYPE html>
-<html>
+
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-  <title>Nexus Loja Oficial</title>
-  <meta charset="UTF-8">
-</head>
-<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ateliê Crochê Artesanal</title><style>
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  background:#f8f5f2;
+  color:#333;
+}
 
-<h1>Nexus Loja Oficial</h1>
+header{
+  background:#d98c5f;
+  color:white;
+  text-align:center;
+  padding:30px;
+}
 
-<button style="background:blue;color:white;padding:10px;"
-onclick="alert('Bem Vindos')">
-Comprar Agora
+.produtos{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:20px;
+  padding:30px;
+}
+
+.card{
+  background:white;
+  width:280px;
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
+  padding:15px;
+  text-align:center;
+}
+
+.card img{
+  width:100%;
+  border-radius:8px;
+}
+
+.preco{
+  font-size:22px;
+  color:#d98c5f;
+  font-weight:bold;
+}
+
+button{
+  background:#d98c5f;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#bf7448;
+}
+</style></head><body><header>
+<h1>Ateliê Crochê Artesanal</h1>
+<p>Peças feitas à mão com carinho e qualidade</p>
+</header><section class="produtos"><div class="card">
+<h2>Bolsa de Crochê</h2>
+<p class="preco">R$ 89,90</p>
+<button onclick="alert('Produto adicionado ao pedido!')">
+Comprar
 </button>
-
-</body>
+</div><div class="card">
+<h2>Sousplat Artesanal</h2>
+<p class="preco">R$ 29,90</p>
+<button onclick="alert('Produto adicionado ao pedido!')">
+Comprar
+</button>
+</div><div class="card">
+<h2>Tapete de Crochê</h2>
+<p class="preco">R$ 149,90</p>
+<button onclick="alert('Produto adicionado ao pedido!')">
+Comprar
+</button>
+</div></section></body>
 </html>
