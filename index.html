@@ -3,76 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kellen do Crochê</title>
+    <title>Kellen do Crochê | Catálogo Oficial</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #ffc0cb; padding-bottom: 100px; }
-        header { background: #ff69b4; color: white; text-align: center; padding: 30px; }
+        header { background: #ff69b4; color: white; text-align: center; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .produtos { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 30px; }
-        .card { background: white; width: 280px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px; text-align: center; }
+        .card { background: white; width: 280px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px; text-align: center; transition: 0.3s; }
         .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; }
         .preco { font-size: 22px; color: #ff69b4; font-weight: bold; margin: 15px 0; }
         button { background: #ff1493; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        #topBtn, #shareBtn { position: fixed; right: 20px; border: none; border-radius: 50px; cursor: pointer; z-index: 1000; color: white; padding: 15px; width: 50px; height: 50px; }
+        #topBtn, #shareBtn { position: fixed; right: 20px; border: none; border-radius: 50px; cursor: pointer; z-index: 1000; color: white; padding: 15px; }
         #topBtn { bottom: 20px; background: #ff1493; display: none; }
         #shareBtn { bottom: 80px; background: #ff69b4; }
     </style>
 </head>
 <body>
-
 <header>
     <h1>Kellen do Crochê</h1>
-    <p>Peças artesanais feitas com amor 💖</p>
+    <p>Arte e Engenharia em cada ponto 🧶</p>
 </header>
-
 <section class="produtos" id="listaProdutos"></section>
-
 <button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
-<button id="shareBtn" title="Compartilhar">🔗</button>
+<button id="shareBtn">🔗</button>
 
 <script>
-/* jshint esversion: 6 */
 const produtos = [
-    { 
-        nome: "Bolsa de Crochê Premium", 
-        preco: "89,90", 
-        img: "https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=500", 
-        link: "5551984578173" 
-    },
-    { 
-        nome: "Tapete de Crochê Artesanal", 
-        preco: "55,00", 
-        img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=500", 
-        link: "5551984578173" 
-    }
+    { nome: "Bolsa de Crochê Premium", preco: "89,90", img: "https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=500", link: "5551984578173" },
+    { nome: "Tapete de Crochê Artesanal", preco: "55,00", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=500", link: "5551984578173" },
+    { nome: "Tapete Premium Rosa e Preto", preco: "110,00", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=500", link: "5551984578173" },
+    { nome: "Trilho de Mesa Elegante", preco: "75,00", img: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=500", link: "5551984578173" },
+    { nome: "Sousplat Encanto", preco: "35,00", img: "https://images.unsplash.com/photo-1620188467120-5042ed1eb5da?q=80&w=500", link: "5551984578173" },
+    { nome: "Cesto de Fio de Malha", preco: "40,00", img: "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500", link: "5551984578173" }
 ];
 
 const container = document.getElementById('listaProdutos');
-
 produtos.forEach(p => {
-    // Agora as crases estão garantidas:
+    // SINTAXE CORRIGIDA COM CRASES
     container.innerHTML += `
-    <div class="card">
-        <img src="${p.img}" alt="${p.nome}">
-        <h2>${p.nome}</h2>
-        <p class="preco">R$ ${p.preco}</p>
-        <a href="https://wa.me/${p.link}?text=Olá!%20Quero%20encomendar%20${encodeURIComponent(p.nome)}" target="_blank">
-            <button>Comprar no WhatsApp</button>
-        </a>
-    </div>`;
+        <div class="card">
+            <img src="${p.img}" alt="${p.nome}">
+            <h3>${p.nome}</h3>
+            <p class="preco">R$ ${p.preco}</p>
+            <button onclick="window.location.href='https://wa.me/${p.link}?text=Quero%20encomendar:%20${encodeURIComponent(p.nome)}'">Comprar</button>
+        </div>`;
 });
 
-window.onscroll = () => {
-    document.getElementById("topBtn").style.display = window.scrollY > 200 ? "block" : "none";
-};
-
-document.getElementById("shareBtn").onclick = () => {
-    if (navigator.share) {
-        navigator.share({ title: "Kellen do Crochê", url: window.location.href });
-    } else {
-        alert("Link do site: " + window.location.href);
-    }
-};
+window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 200 ? "block" : "none";
 </script>
-
 </body>
 </html>

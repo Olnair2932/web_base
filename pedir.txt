@@ -1,0 +1,6 @@
+Comando:
+"Nexus, adicione um novo produto ao motor JavaScript: o nome é 'Cestinho Organizador Boho', o preço é '45,00' e use esta imagem: https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500. Lembre-se de manter as crases no código e realizar o deploy."
+
+
+Comando:
+"Nexus, remova o 'Tapete de Crochê Artesanal' do nosso banco de dados JavaScript. Reconstrua o index.html sem esse item, verifique se a sintaxe está correta e atualize o site no GitHub."
