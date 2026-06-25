@@ -1,66 +1,38 @@
 #!/bin/bash
+RAIZ="/data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base"
+INDEX_FILE="$RAIZ/index.html"
+ENV_FILE="/data/data/com.termux/files/home/ia_termux/.env"
 
-# --- BUSCA INTELIGENTE DO .ENV ---
-if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
-elif [ -f "$HOME/ia_termux/.env" ]; then
-    export $(grep -v '^#' "$HOME/ia_termux/.env" | xargs)
-else
-    echo "❌ Erro: Arquivo .env não encontrado em lugar nenhum!"
-    echo "Tente: ln -s ~/ia_termux/.env .env"
-    exit 1
-fi
+cd "$RAIZ" || exit
+[ -f "$ENV_FILE" ] && source "$ENV_FILE"
 
-INDEX_FILE="index.html"
+INPUT="${1:-"Nenhum comando"}"
 
-echo "====================================="
-echo "   NEXUS IA: DIAGNÓSTICO E AÇÃO      "
-echo "====================================="
-read -p "O que deseja adicionar? " USER_INPUT
+# IA Gemini para processar Adicionar/Remover
+PROMPT="Aja como um catalogador artesanal. Identifique se quer ADICIONAR ou REMOVER um produto. Responda APENAS JSON: {\"acao\": \"adicionar\" ou \"remover\", \"nome\": \"...\", \"preco\": \"...\", \"img\": \"...\"}"
 
-# Chamada ao Gemini
-echo "⏳ Consultando Google Gemini..."
-
-PAYLOAD=$(cat <<EOD
-{
-  "contents": [{
-    "parts": [{
-      "text": "O usuário quer adicionar um produto: '$USER_INPUT'. Extraia Nome, Preço (número) e use uma URL de imagem do Unsplash relacionada a crochê. Responda apenas um JSON puro: {\"nome\": \"...\", \"preco\": \"...\", \"img\": \"...\"}"
-    }]
-  }]
-}
-EOD
-)
-
-RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}" \
+RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
     -H "Content-Type: application/json" \
-    -d "$PAYLOAD")
+    -d "{ \"contents\": [{\"parts\": [{\"text\": \"$PROMPT. Comando: $INPUT\"}]}] }")
 
-# Extração do Texto e limpeza
-RAW_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
-CLEAN_JSON=$(echo "$RAW_TEXT" | sed 's/```json//g' | sed 's/```//g' | tr -d '\n')
+CLEAN=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' | sed 's/```json//g' | sed 's/```//g' | tr -d '\n')
+ACAO=$(echo "$CLEAN" | jq -r '.acao')
+NOME=$(echo "$CLEAN" | jq -r '.nome')
 
-NOME=$(echo "$CLEAN_JSON" | jq -r '.nome // empty')
-PRECO=$(echo "$CLEAN_JSON" | jq -r '.preco // empty')
-IMG=$(echo "$CLEAN_JSON" | jq -r '.img // empty')
-
-if [ -z "$NOME" ]; then
-    echo "❌ Erro ao processar. Verifique sua API KEY ou conexão."
-    exit 1
+if [ "$ACAO" == "adicionar" ]; then
+    PRECO=$(echo "$CLEAN" | jq -r '.preco')
+    IMG=$(echo "$CLEAN" | jq -r '.img')
+    WA_TEXT=$(echo "Olá, quero o produto $NOME" | sed 's/ /%20/g')
+    CARD="<div class=\"card\"><img src=\"$IMG\" alt=\"$NOME\"><h2>$NOME</h2><p class=\"preco\">R$ $PRECO</p><a href=\"https://wa.me/5551984578173?text=$WA_TEXT\" target=\"_blank\"><button>Comprar</button></a></div>"
+    sed -i "\|</section>|i $CARD" "$INDEX_FILE"
+    MSG="Nexus IA: + $NOME"
+elif [ "$ACAO" == "remover" ]; then
+    sed -i "/$NOME/Id" "$INDEX_FILE"
+    MSG="Nexus IA: - $NOME"
 fi
 
-echo "📦 Produto: $NOME | 💰 R$ $PRECO"
-
-# Injeção no HTML
-WA_TEXT=$(echo "Olá! Quero o produto $NOME" | sed 's/ /%20/g')
-CARD="<div class=\"card\"><img src=\"$IMG\" alt=\"$NOME\"><h2>$NOME</h2><p class=\"preco\">R$ $PRECO</p><a href=\"https://wa.me/5551984578173?text=$WA_TEXT\" target=\"_blank\"><button>Comprar por WhatsApp</button></a></div>"
-
-sed -i "/<\/section>/i $CARD" "$INDEX_FILE"
-
-echo "✅ index.html atualizado!"
-
-# Git Push Automático
+# Sincroniza com o GitHub Pages
 git add .
-git commit -m "Nexus IA: + $NOME"
+git commit -m "$MSG"
 git push origin main
-echo "🚀 Site atualizado no GitHub!"
+echo "🚀 Catálogo web_base atualizado!"
