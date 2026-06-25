@@ -33,12 +33,13 @@ const produtos = [
     { nome: "Tapete Premium Rosa e Preto", preco: "110,00", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=500", link: "5551984578173" },
     { nome: "Trilho de Mesa Elegante", preco: "75,00", img: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=500", link: "5551984578173" },
     { nome: "Sousplat Encanto", preco: "35,00", img: "https://images.unsplash.com/photo-1620188467120-5042ed1eb5da?q=80&w=500", link: "5551984578173" },
-    { nome: "Cesto de Fio de Malha", preco: "40,00", img: "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500", link: "5551984578173" }
+    { nome: "Cesto de Fio de Malha", preco: "40,00", img: "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500", link: "5551984578173" },
+    { nome: "Sapatinho de Bebê em Crochê", preco: "50,00", img: "https://images.unsplash.com/photo-1596464716127-f2a89997de0d?q=80&w=500", link: "5551984578173" }
 ];
 
 const container = document.getElementById('listaProdutos');
 produtos.forEach(p => {
-    // SINTAXE CORRIGIDA COM CRASES
+    // A CRÁSE ABAIXO É O QUE O NEXUS ESTÁ ESQUECENDO:
     container.innerHTML += `
         <div class="card">
             <img src="${p.img}" alt="${p.nome}">
