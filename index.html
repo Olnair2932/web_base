@@ -29,18 +29,19 @@ button{ background:#ff1493; color:white; border:none; padding:12px 20px; border-
 
 <script>
 const produtos = [
-    { nome: "Bolsa de Crochê Premium", preco: "89,90", img: "https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=500", link: "5551984578173" }
+    { nome: "Bolsa de Crochê Premium", preco: "89,90", img: "https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=500", link: "5551984578173" },
+    { nome: "Tapete de Crochê Artesanal", preco: "55,00", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=500", link: "5551984578173" }
 ];
 
 const container = document.getElementById('listaProdutos');
 produtos.forEach(p => {
-    container.innerHTML += \
+    container.innerHTML +=
     <div class="card">
-        <img src="\${p.img}" alt="\${p.nome}">
-        <h2>\${p.nome}</h2>
-        <p class="preco">R$ \${p.preco}</p>
-        <a href="https://wa.me/\${p.link}?text=Quero%20encomendar%20\${p.nome.replace(' ', '%20')}" target="_blank"><button>Comprar no WhatsApp</button></a>
-    </div>\;
+        <img src="${p.img}" alt="${p.nome}">
+        <h2>${p.nome}</h2>
+        <p class="preco">R$ ${p.preco}</p>
+        <a href="https://wa.me/${p.link}?text=Quero%20encomendar%20${p.nome.replace(' ', '%20')}" target="_blank"><button>Comprar no WhatsApp</button></a>
+    </div>;
 });
 
 window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 200 ? "block" : "none";
