@@ -1,202 +1,52 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff69b4">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Kellen do Crochê</title>
-
-<style>
-body{
-  font-family: Arial, sans-serif;
-  margin:0;
-  background:#ffc0cb;
-  color:#333;
-}
-
-header{
-  background:#ff69b4;
-  color:white;
-  text-align:center;
-  padding:30px;
-}
-
-.produtos{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:20px;
-  padding:30px;
-}
-
-.card{
-  background:white;
-  width:280px;
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,.1);
-  padding:15px;
-  text-align:center;
-}
-
-.card img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-  border-radius:10px;
-}
-
-.preco{
-  font-size:22px;
-  color:#ff69b4;
-  font-weight:bold;
-}
-
-button{
-  background:#ff1493;
-  color:white;
-  border:none;
-  padding:12px 20px;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:bold;
-  margin-top:5px;
-}
-
-button:hover{
-  background:#c71585;
-}
-
-/* BOTÃO VOLTAR AO TOPO */
-#topBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #ff1493;
-  color: white;
-  border: none;
-  padding: 12px 15px;
-  border-radius: 50px;
-  cursor: pointer;
-  display: none;
-  z-index: 999;
-}
-
-/* BOTÃO COMPARTILHAR */
-#shareBtn {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background: #ff69b4;
-  color: white;
-  border: none;
-  padding: 12px 15px;
-  border-radius: 50px;
-  cursor: pointer;
-  z-index: 999;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kellen do Crochê</title>
+    <style>
+        body{ font-family: 'Segoe UI', Arial, sans-serif; margin:0; background:#ffc0cb; color:#333; }
+        header{ background:#ff69b4; color:white; text-align:center; padding:30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .produtos{ display:flex; flex-wrap:wrap; justify-content:center; gap:20px; padding:30px; }
+        .card{ background:white; width:280px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:15px; text-align:center; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img{ width:100%; height:200px; object-fit:cover; border-radius:8px; }
+        .preco{ font-size:22px; color:#ff69b4; font-weight:bold; margin: 10px 0; }
+        button{ background:#ff1493; color:white; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; font-weight:bold; width: 100%; }
+        button:hover{ background:#c71585; }
+        #topBtn, #shareBtn { position: fixed; right: 20px; border: none; border-radius: 50px; cursor: pointer; z-index: 999; color: white; padding: 12px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        #topBtn { bottom: 20px; background: #ff1493; display: none; }
+        #shareBtn { bottom: 80px; background: #ff69b4; }
+    </style>
 </head>
-
 <body>
-
 <header>
-<h1>Kellen do Crochê</h1>
-<p>Peças artesanais feitas com amor 💖</p>
+    <h1>Kellen do Crochê</h1>
+    <p>Peças artesanais feitas com amor 💖</p>
 </header>
 
 <section class="produtos">
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf" alt="Bolsa de Crochê">
-
-<h2>Bolsa de Crochê Premium</h2>
-<p class="preco">R$ 89,90</p>
-
-<a href="https://wa.me/5551984578173?text=Quero%20comprar%20a%20Bolsa%20de%20Crochê" target="_blank">
-<button>Comprar por WhatsApp</button>
-</a>
-</div>
-
-<div class="card">
-<h2>Sousplat Artesanal</h2>
-<p class="preco">R$ 29,90</p>
-
-<a href="https://wa.me/5551984578173?text=Quero%20comprar%20o%20Sousplat%20Artesanal" target="_blank">
-<button>Comprar por WhatsApp</button>
-</a>
-</div>
-
-<div class="card">
-<h2>Tapete de Crochê</h2>
-<p class="preco">R$ 149,90</p>
-
-<a href="https://wa.me/5551984578173?text=Quero%20comprar%20o%20Tapete%20de%20Crochê" target="_blank">
-<button>Comprar por WhatsApp</button>
-</a>
-</div>
-
-<div class="card"><img src="https://images.unsplash.com/photo-1621939514649-280e2ee25f62?q=80&w=1000&auto=format&fit=crop" alt="manta de bebê azul"><h2>manta de bebê azul</h2><p class="preco">R$ 180</p><a href="https://wa.me/5551984578173?text=Olá!%20Quero%20o%20produto%20manta%20de%20bebê%20azul" target="_blank"><button>Comprar por WhatsApp</button></a></div>
-<div class="card">
-    <img src="" alt="bolsa preta">
-    <h2>bolsa preta</h2>
-    <p class="preco">R$ 100,00</p>
-    <a href="" target="_blank">
-        <button>Comprar por WhatsApp</button>
-    </a>
-</div>
-<div class="card"><img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=500&auto=format&fit=crop" alt="bolsa amarela"><h2>bolsa amarela</h2><p class="preco">R$ 0</p><a href="https://wa.me/5551984578173?text=Olá!%20Quero%20o%20produto%20bolsa%20amarela" target="_blank"><button>Comprar por WhatsApp</button></a></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1590874103328-e638d6d5eccc?q=80&w=500&auto=format&fit=crop" alt="bolsa preta"><h2>bolsa preta</h2><p class="preco">R$ 0.00</p><a href="https://wa.me/5551984578173?text=Olá!%20Quero%20o%20produto%20bolsa%20preta" target="_blank"><button>Comprar por WhatsApp</button></a></div>
-<div class="card"><img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=500&auto=format&fit=crop" alt="Bolsa preta"><h2>Bolsa preta</h2><p class="preco">R$ 0</p><a href="https://wa.me/5551984578173?text=Olá!%20Quero%20o%20produto%20Bolsa%20preta" target="_blank"><button>Comprar por WhatsApp</button></a></div>
+    <!-- PONTO_DE_INJECAO -->
+    <div class="card">
+        <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf" alt="Bolsa de Crochê">
+        <h2>Bolsa de Crochê Premium</h2>
+        <p class="preco">R$ 89,90</p>
+        <a href="https://wa.me/5551984578173?text=Quero%20encomendar%20a%20Bolsa" target="_blank"><button>Comprar no WhatsApp</button></a>
+    </div>
 </section>
 
-<!-- BOTÕES FLUTUANTES -->
-<button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-↑ Topo
-</button>
-
+<button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Topo</button>
 <button id="shareBtn">Compartilhar</button>
 
 <script>
-// botão voltar ao topo
-window.onscroll = function () {
-  const btn = document.getElementById("topBtn");
-
-  if (document.documentElement.scrollTop > 200) {
-    btn.style.display = "block";
-  } else {
-    btn.style.display = "none";
-  }
-};
-
-// compartilhar site (Android / Web Share API)
-document.getElementById("shareBtn").addEventListener("click", async () => {
-  const shareData = {
-    title: "Kellen do Crochê",
-    text: "Confira essas peças artesanais incríveis 💖",
-    url: window.location.href
-  };
-
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-    } catch (err) {
-      console.log("Compartilhamento cancelado", err);
-    }
-  } else {
-    alert("Seu navegador não suporta compartilhamento nativo.");
-  }
-});
-</script>
-
-<script>
-history.pushState(null, null, location.href);
-window.addEventListener("popstate", function () {
-  history.pushState(null, null, location.href);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+    window.onscroll = function () {
+        document.getElementById("topBtn").style.display = document.documentElement.scrollTop > 200 ? "block" : "none";
+    };
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+        if (navigator.share) {
+            await navigator.share({ title: "Kellen do Crochê", text: "Olha que lindo!", url: window.location.href });
+        }
+    });
 </script>
 </body>
 </html>
