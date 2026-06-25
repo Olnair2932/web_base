@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Cores para o terminal
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+FILE="index.html"
+
+echo -e "🔍 Analisando $FILE..."
+
+# Verifica se o arquivo existe
+if [ ! -f "$FILE" ]; then
+    echo -e "${RED}[ERRO] Arquivo $FILE não encontrado!${NC}"
+    exit 1
+fi
+
+# Executa o JSHint e captura a saída
+ERROS=$(jshint --extract=always "$FILE")
+
+if [ -z "$ERROS" ]; then
+    echo -e "${GREEN}[SUCESSO] Código JS validado. Nenhuma falha encontrada! ✨${NC}"
+else
+    echo -e "${RED}[FALHA] Foram encontrados erros no código:${NC}"
+    echo "$ERROS"
+    exit 1
+fi
+
+echo -e "\n${GREEN}Pronto para publicar!${NC}"

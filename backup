@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Cores para o terminal
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+SOURCE="index.html"
+BACKUP_DIR="backups"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+BACKUP_FILE="$BACKUP_DIR/index_backup_$TIMESTAMP.html"
+
+# Criar pasta de backup se não existir
+mkdir -p "$BACKUP_DIR"
+
+echo -e "📦 Iniciando backup de $SOURCE..."
+
+if [ -f "$SOURCE" ]; then
+    cp "$SOURCE" "$BACKUP_FILE"
+    echo -e "${GREEN}[OK] Backup realizado com sucesso!${NC}"
+    echo -e "${YELLOW}Arquivo: $BACKUP_FILE${NC}"
+    
+    # Manter apenas os últimos 10 backups para não lotar o celular
+    ls -t $BACKUP_DIR/index_backup_*.html | tail -n +11 | xargs rm -f 2>/dev/null
+else
+    echo -e "\033[0;31m[ERRO] Arquivo $SOURCE não encontrado para backup.\033[0m"
+    exit 1
+fi
