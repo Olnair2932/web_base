@@ -2,3 +2,8 @@
 
 ~/ia_termux/arsenal/scripts/nexus_limpar.sh --tudo
 ~/ia_termux/arsenal/scripts/nexus_limpar.sh --listar
+
+
+
+
+~/ia_termux/arsenal/scripts/web_base/nexus_limpar.sh --id 1719382045
