@@ -7,25 +7,29 @@
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #ffc0cb; padding-bottom: 100px; }
         header { background: #ff69b4; color: white; text-align: center; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* Carrossel */
         .carousel-container { position: relative; max-width: 800px; margin: 20px auto; overflow: hidden; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: white; }
         .carousel-slides { display: flex; transition: transform 0.5s ease-in-out; }
         .slide { min-width: 100%; position: relative; }
         .slide img { width: 100%; height: 300px; object-fit: cover; }
         .slide-caption { position: absolute; bottom: 0; background: rgba(255, 20, 147, 0.7); color: white; width: 100%; padding: 10px; text-align: center; font-weight: bold; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); border: none; padding: 10px; cursor: pointer; border-radius: 50%; color: #ff1493; font-weight: bold; z-index: 10; }
-        .prev { left: 10px; }
-        .next { right: 10px; }
+        
+        /* Grid de Produtos */
         .produtos { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
-        .card { background: white; width: 280px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px; text-align: center; }
-        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; }
+        .card { background: white; width: 280px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 15px; text-align: center; transition: 0.3s; }
+        .card img { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; }
         .preco { font-size: 22px; color: #ff69b4; font-weight: bold; margin: 10px 0; }
+        
         button { background: #ff1493; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 5px; }
         .btn-interacao { display: flex; gap: 5px; margin-top: 10px; }
         .like-btn { background: #fff; color: #ff1493; border: 2px solid #ff1493; flex: 1; transition: 0.3s; }
         .like-btn.liked { background: #ff1493; color: #fff; }
-        #secao-comentarios { max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; }
-        textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; resize: none; box-sizing: border-box; }
-        .comentario-item { border-bottom: 1px solid #eee; padding: 10px 0; font-size: 14px; color: #444; }
+
+        #secao-comentarios { max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; resize: none; box-sizing: border-box; margin-bottom: 10px; }
+        .comentario-item { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 14px; color: #444; }
+        
         #topBtn, #shareBtn { position: fixed; right: 20px; border: none; border-radius: 50px; cursor: pointer; z-index: 1000; color: white; padding: 15px; font-size: 20px; }
         #topBtn { bottom: 20px; background: #ff1493; display: none; }
         #shareBtn { bottom: 80px; background: #4267B2; }
@@ -38,31 +42,26 @@
     <p>Arte e Engenharia em cada ponto 🧶</p>
 </header>
 
+<!-- Carrossel de Destaques -->
 <div class="carousel-container">
     <div class="carousel-slides" id="carousel">
         <div class="slide">
             <img src="https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=800" alt="Destaque 1">
-            <div class="slide-caption">Coleção Luxo de Inverno</div>
+            <div class="slide-caption">Novo: Bolsas Elegantes</div>
         </div>
         <div class="slide">
-            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800" alt="Destaque 2">
-            <div class="slide-caption">Tapetes Personalizados</div>
-        </div>
-        <div class="slide">
-            <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800" alt="Destaque 3">
-            <div class="slide-caption">Decoração Elegante</div>
+            <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800" alt="Destaque 2">
+            <div class="slide-caption">Trilhos de Mesa Boho</div>
         </div>
     </div>
-    <button class="nav-btn prev" onclick="moveCarousel(-1)">❮</button>
-    <button class="nav-btn next" onclick="moveCarousel(1)">❯</button>
 </div>
 
-<section class="produtos" id="listaProdutos"></section>
+<section class="produtos" id="app"></section>
 
 <section id="secao-comentarios">
-    <h3>Comentários da Comunidade</h3>
-    <textarea id="texto-comentario" rows="3" placeholder="O que achou das nossas artes?"></textarea>
-    <button onclick="postarComentario()">Enviar Elogio</button>
+    <h3>Mural de Clientes</h3>
+    <textarea id="texto-comentario" rows="3" placeholder="Deixe um elogio para a Kellen..."></textarea>
+    <button onclick="postarComentario()">Publicar</button>
     <div id="mural-comentarios" style="margin-top:15px;"></div>
 </section>
 
@@ -70,71 +69,70 @@
 <button id="shareBtn" onclick="compartilhar()">🔗</button>
 
 <script>
-const produtos = [
-    { id: 1, nome: "Bolsa de Crochê Premium", preco: "89,90", img: "https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=500", link: "5551984578173" },
-    { id: 2, nome: "Tapete Artesanal", preco: "55,00", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=500", link: "5551984578173" },
-    { id: 3, nome: "Trilho de Mesa Rosa", preco: "75,00", img: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=500", link: "5551984578173" },
-    { id: 4, nome: "Sousplat Encanto", preco: "35,00", img: "https://images.unsplash.com/photo-1620188467120-5042ed1eb5da?q=80&w=500", link: "5551984578173" }
-];
+    const produtos = [
+        { id: 1, nome: "Cesto Organizador", preco: "R$ 45,00", img: "https://images.unsplash.com/photo-1597733153607-009d363b9561?q=80&w=500" },
+        { id: 2, nome: "Jogo Americano", preco: "R$ 80,00", img: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=500" },
+        { id: 3, nome: "Amigurumi Ursinho", preco: "R$ 60,00", img: "https://images.unsplash.com/photo-1555529721-715365526017?q=80&w=500" },
+        { id: 4, nome: "Capa de Almofada Boho", preco: "R$ 75,00", img: "https://images.unsplash.com/photo-1628191137573-2287233a73a5?q=80&w=500" },
+        { id: 5, nome: "Manta de Sofá", preco: "R$ 150,00", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=500" }
+    ];
 
-// Carregar curtidas salvas
-let likesSalvos = JSON.parse(localStorage.getItem('kellen_likes')) || {};
+    let likesSalvos = JSON.parse(localStorage.getItem('kellen_likes')) || {};
 
-const container = document.getElementById('listaProdutos');
-produtos.forEach(p => {
-    const isLiked = likesSalvos[p.id] ? 'liked' : '';
-    container.innerHTML += `
-        <div class="card">
-            <img src="${p.img}" alt="${p.nome}">
-            <h3>${p.nome}</h3>
-            <p class="preco">R$ ${p.preco}</p>
-            <div class="btn-interacao">
-                <button class="like-btn ${isLiked}" onclick="toggleLike(this, ${p.id})">♥</button>
-                <button onclick="window.location.href='https://wa.me/${p.link}?text=Quero%20encomendar:%20${encodeURIComponent(p.nome)}'">Comprar</button>
-            </div>
-        </div>`;
-});
+    const app = document.getElementById('app');
+    produtos.forEach(p => {
+        const isLiked = likesSalvos[p.id] ? 'liked' : '';
+        app.innerHTML += `
+            <div class="card">
+                <img src="${p.img}" alt="${p.nome}">
+                <h3>${p.nome}</h3>
+                <div class="preco">${p.preco}</div>
+                <div class="btn-interacao">
+                    <button class="like-btn ${isLiked}" onclick="toggleLike(this, ${p.id})">♥</button>
+                    <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero%20o%20item:%20${encodeURIComponent(p.nome)}'">Comprar</button>
+                </div>
+            </div>`;
+    });
 
-function toggleLike(btn, id) {
-    btn.classList.toggle('liked');
-    likesSalvos[id] = btn.classList.contains('liked');
-    localStorage.setItem('kellen_likes', JSON.stringify(likesSalvos));
-}
+    function toggleLike(btn, id) {
+        btn.classList.toggle('liked');
+        likesSalvos[id] = btn.classList.contains('liked');
+        localStorage.setItem('kellen_likes', JSON.stringify(likesSalvos));
+    }
 
-let currentSlide = 0;
-function moveCarousel(step) {
-    const carousel = document.getElementById('carousel');
-    const slides = document.querySelectorAll('.slide');
-    currentSlide = (currentSlide + step + slides.length) % slides.length;
-    carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
-}
-setInterval(() => moveCarousel(1), 5000);
+    // Carrossel
+    let slideIdx = 0;
+    setInterval(() => {
+        const carousel = document.getElementById('carousel');
+        const slides = document.querySelectorAll('.slide');
+        slideIdx = (slideIdx + 1) % slides.length;
+        carousel.style.transform = `translateX(-${slideIdx * 100}%)`;
+    }, 4000);
 
-function postarComentario() {
-    const txt = document.getElementById('texto-comentario');
-    if(txt.value.trim() === "") return;
-    
-    let comentarios = JSON.parse(localStorage.getItem('kellen_comentarios')) || [];
-    comentarios.unshift(txt.value);
-    localStorage.setItem('kellen_comentarios', JSON.stringify(comentarios));
-    
-    txt.value = "";
-    renderizarComentarios();
-}
+    // Comentários
+    function postarComentario() {
+        const txt = document.getElementById('texto-comentario');
+        if(!txt.value.trim()) return;
+        let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
+        lista.unshift(txt.value);
+        localStorage.setItem('kellen_coments', JSON.stringify(lista));
+        txt.value = "";
+        renderComents();
+    }
 
-function renderizarComentarios() {
-    const mural = document.getElementById('mural-comentarios');
-    let comentarios = JSON.parse(localStorage.getItem('kellen_comentarios')) || [];
-    mural.innerHTML = comentarios.map(c => `<div class="comentario-item"><strong>Visitante:</strong> ${c}</div>`).join('');
-}
+    function renderComents() {
+        const mural = document.getElementById('mural-comentarios');
+        let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
+        mural.innerHTML = lista.map(c => `<div class="comentario-item">⭐ ${c}</div>`).join('');
+    }
 
-function compartilhar() {
-    if (navigator.share) navigator.share({ title: 'Kellen do Crochê', url: window.location.href });
-    else window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
-}
+    function compartilhar() {
+        if (navigator.share) navigator.share({ title: 'Kellen do Crochê', url: window.location.href });
+        else window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href));
+    }
 
-window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 200 ? "block" : "none";
-renderizarComentarios();
+    window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 200 ? "block" : "none";
+    renderComents();
 </script>
 </body>
 </html>
