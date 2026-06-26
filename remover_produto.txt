@@ -1,0 +1,4 @@
+~/ia_termux/arsenal/scripts/nexus_limpar.sh --id "ID_QUE_APARECEU_NA_LISTA"
+
+~/ia_termux/arsenal/scripts/nexus_limpar.sh --tudo
+~/ia_termux/arsenal/scripts/nexus_limpar.sh --listar

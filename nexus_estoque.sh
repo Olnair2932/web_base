@@ -1,3 +1,36 @@
+#!/bin/bash
+# NEXUS ESTOQUE v1.0 - Automação de Catálogo
+RAIZ_WEB="/data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base"
+DB_PRODUTOS="$RAIZ_WEB/produtos.json"
+INDEX_FILE="$RAIZ_WEB/index.html"
+
+# Inicializa o JSON se não existir
+if [ ! -f "$DB_PRODUTOS" ]; then
+    echo '[]' > "$DB_PRODUTOS"
+fi
+
+# Verifica argumentos
+if [ "$#" -ne 3 ]; then
+    echo -e "\033[1;31m[ERRO]\033[0m Uso: ./nexus_estoque.sh \"Nome\" \"Preço\" \"URL_Imagem\""
+    exit 1
+fi
+
+NOME=$1
+PRECO=$2
+IMG=$3
+ID=$(date +%s)
+
+echo -e "\033[1;35m[NEXUS]:\033[0m Adicionando '$NOME' ao sistema..."
+
+# 1. Adiciona ao banco de dados JSON usando jq
+TMP=$(mktemp)
+jq --arg id "$ID" --arg nm "$NOME" --arg pr "$PRECO" --arg im "$IMG" \
+'. += [{id: $id, nome: $nm, preco: ("R$ " + $pr), img: $im}]' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
+
+# 2. Reconstroi o index.html com o novo banco de dados
+LISTA_JSON=$(cat "$DB_PRODUTOS")
+
+cat << EOT > "$INDEX_FILE"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -56,36 +89,23 @@
 <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-    const produtos = [
-  {
-    "id": "1782457186",
-    "nome": "Manta de Luxo Rosa",
-    "preco": "R$ 145,00",
-    "img": "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500"
-  },
-  {
-    "id": "1782459115",
-    "nome": "Manta de Luxo Rosa",
-    "preco": "R$ 145,00",
-    "img": "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500"
-  }
-];
+    const produtos = $LISTA_JSON;
 
     const app = document.getElementById('app');
     let likesSalvos = JSON.parse(localStorage.getItem('kellen_likes')) || {};
 
     produtos.forEach(p => {
         const isLiked = likesSalvos[p.id] ? 'liked' : '';
-        app.innerHTML += `
+        app.innerHTML += \`
             <div class="card">
-                <img src="${p.img}" alt="${p.nome}">
-                <h3>${p.nome}</h3>
-                <div class="preco">${p.preco}</div>
+                <img src="\${p.img}" alt="\${p.nome}">
+                <h3>\${p.nome}</h3>
+                <div class="preco">\${p.preco}</div>
                 <div class="btn-interacao">
-                    <button class="like-btn ${isLiked}" onclick="toggleLike(this, '${p.id}')">♥</button>
-                    <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20${encodeURIComponent(p.nome)}'">Comprar</button>
+                    <button class="like-btn \${isLiked}" onclick="toggleLike(this, '\${p.id}')">♥</button>
+                    <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20\${encodeURIComponent(p.nome)}'">Comprar</button>
                 </div>
-            </div>`;
+            </div>\`;
     });
 
     function toggleLike(btn, id) {
@@ -107,7 +127,7 @@
     function renderComents() {
         const mural = document.getElementById('mural-comentarios');
         let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
-        mural.innerHTML = lista.map(c => `<div class="comentario-item">⭐ ${c}</div>`).join('');
+        mural.innerHTML = lista.map(c => \`<div class="comentario-item">⭐ \${c}</div>\`).join('');
     }
 
     function compartilhar() {
@@ -121,8 +141,13 @@
     let slideIdx = 0;
     setInterval(() => {
         const c = document.getElementById('carousel');
-        if(c) { slideIdx = (slideIdx + 1) % 2; c.style.transform = `translateX(-${slideIdx * 100}%)`; }
+        if(c) { slideIdx = (slideIdx + 1) % 2; c.style.transform = \`translateX(-\${slideIdx * 100}%)\`; }
     }, 4000);
 </script>
 </body>
 </html>
+EOT
+
+# 3. Executa o Deploy Automático
+echo -e "\033[1;32m[SUCESSO]:\033[0m Produto '$NOME' injetado. Iniciando Deploy..."
+cd $RAIZ_WEB && ./deploy.sh

@@ -1,3 +1,14 @@
+#!/bin/bash
+# NEXUS LIMPAR v1.0 - Manutenção de Inventário
+RAIZ_WEB="/data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base"
+DB_PRODUTOS="$RAIZ_WEB/produtos.json"
+INDEX_FILE="$RAIZ_WEB/index.html"
+
+# Função para reconstruir o site após alteração no JSON
+reconstruir_site() {
+    LISTA_JSON=$(cat "$DB_PRODUTOS")
+    # Usa o mesmo template do nexus_estoque.sh para manter a identidade visual
+    cat << EOT > "$INDEX_FILE"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -33,96 +44,86 @@
     <h1>Kellen do Crochê</h1>
     <p>Arte e Engenharia em cada ponto 🧶</p>
 </header>
-
 <div class="carousel-container">
     <div class="carousel-slides" id="carousel">
-        <div class="slide"><img src="https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=800" alt="Bolsa"></div>
-        <div class="slide"><img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800" alt="Trilho"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=800"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800"></div>
     </div>
 </div>
-
 <section class="produtos" id="app"></section>
-
 <section id="secao-comentarios">
     <h3>Mural de Clientes</h3>
     <textarea id="texto-comentario" style="width:100%; border-radius:12px; padding:10px; border:1px solid #ddd;" rows="3" placeholder="Deixe um elogio..."></textarea>
     <button onclick="postarComentario()" style="margin-top:10px;">Publicar</button>
     <div id="mural-comentarios"></div>
 </section>
-
 <button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
 <button id="shareBtn" onclick="compartilhar()">🔗</button>
-
 <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-
-    const produtos = [
-  {
-    "id": "1782457186",
-    "nome": "Manta de Luxo Rosa",
-    "preco": "R$ 145,00",
-    "img": "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500"
-  },
-  {
-    "id": "1782459115",
-    "nome": "Manta de Luxo Rosa",
-    "preco": "R$ 145,00",
-    "img": "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500"
-  }
-];
-
+    const produtos = $LISTA_JSON;
     const app = document.getElementById('app');
     let likesSalvos = JSON.parse(localStorage.getItem('kellen_likes')) || {};
-
     produtos.forEach(p => {
         const isLiked = likesSalvos[p.id] ? 'liked' : '';
-        app.innerHTML += `
+        app.innerHTML += \`
             <div class="card">
-                <img src="${p.img}" alt="${p.nome}">
-                <h3>${p.nome}</h3>
-                <div class="preco">${p.preco}</div>
+                <img src="\${p.img}" alt="\${p.nome}">
+                <h3>\${p.nome}</h3>
+                <div class="preco">\${p.preco}</div>
                 <div class="btn-interacao">
-                    <button class="like-btn ${isLiked}" onclick="toggleLike(this, '${p.id}')">♥</button>
-                    <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20${encodeURIComponent(p.nome)}'">Comprar</button>
+                    <button class="like-btn \${isLiked}" onclick="toggleLike(this, '\${p.id}')">♥</button>
+                    <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20\${encodeURIComponent(p.nome)}'">Comprar</button>
                 </div>
-            </div>`;
+            </div>\`;
     });
-
     function toggleLike(btn, id) {
         btn.classList.toggle('liked');
         likesSalvos[id] = btn.classList.contains('liked');
         localStorage.setItem('kellen_likes', JSON.stringify(likesSalvos));
     }
-
-    function postarComentario() {
-        const txt = document.getElementById('texto-comentario');
-        if(!txt.value.trim()) return;
-        let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
-        lista.unshift(txt.value);
-        localStorage.setItem('kellen_coments', JSON.stringify(lista));
-        txt.value = "";
-        renderComents();
-    }
-
     function renderComents() {
         const mural = document.getElementById('mural-comentarios');
         let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
-        mural.innerHTML = lista.map(c => `<div class="comentario-item">⭐ ${c}</div>`).join('');
+        mural.innerHTML = lista.map(c => \`<div class="comentario-item">⭐ \${c}</div>\`).join('');
     }
-
-    function compartilhar() {
-        if (navigator.share) navigator.share({ title: 'Kellen do Crochê', url: window.location.href });
-        else alert('Link copiado!');
-    }
-
     window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 300 ? "flex" : "none";
     renderComents();
-
     let slideIdx = 0;
     setInterval(() => {
         const c = document.getElementById('carousel');
-        if(c) { slideIdx = (slideIdx + 1) % 2; c.style.transform = `translateX(-${slideIdx * 100}%)`; }
+        if(c) { slideIdx = (slideIdx + 1) % 2; c.style.transform = \`translateX(-\${slideIdx * 100}%)\`; }
     }, 4000);
 </script>
 </body>
 </html>
+EOT
+}
+
+# Lógica de Comando
+case "$1" in
+    "--tudo")
+        echo -e "\033[1;31m[ALERTA]:\033[0m Resetando todo o estoque..."
+        echo '[]' > "$DB_PRODUTOS"
+        reconstruir_site
+        ;;
+    "--id")
+        if [ -z "$2" ]; then echo "Informe o ID do produto."; exit 1; fi
+        echo -e "\033[1;33m[NEXUS]:\033[0m Removendo item ID $2..."
+        TMP=$(mktemp)
+        jq --arg id "$2" 'del(.[] | select(.id == $id))' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
+        reconstruir_site
+        ;;
+    "--listar")
+        echo -e "\033[1;34m[INVENTÁRIO ATUAL]:\033[0m"
+        jq -r '.[] | "ID: \(.id) | Nome: \(.nome)"' "$DB_PRODUTOS"
+        exit 0
+        ;;
+    *)
+        echo "Uso: ./nexus_limpar.sh [--tudo] [--id ID_DO_PRODUTO] [--listar]"
+        exit 1
+        ;;
+esac
+
+# Deploy final
+cd "$RAIZ_WEB" && ./deploy.sh
