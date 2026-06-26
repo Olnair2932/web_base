@@ -33,29 +33,23 @@
     <h1>Kellen do Crochê</h1>
     <p>Arte e Engenharia em cada ponto 🧶</p>
 </header>
-
 <div class="carousel-container">
     <div class="carousel-slides" id="carousel">
-        <div class="slide"><img src="https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=800" alt="Bolsa"></div>
-        <div class="slide"><img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800" alt="Trilho"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=800"></div>
+        <div class="slide"><img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800"></div>
     </div>
 </div>
-
 <section class="produtos" id="app"></section>
-
 <section id="secao-comentarios">
     <h3>Mural de Clientes</h3>
     <textarea id="texto-comentario" style="width:100%; border-radius:12px; padding:10px; border:1px solid #ddd;" rows="3" placeholder="Deixe um elogio..."></textarea>
     <button onclick="postarComentario()" style="margin-top:10px;">Publicar</button>
     <div id="mural-comentarios"></div>
 </section>
-
 <button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
 <button id="shareBtn" onclick="compartilhar()">🔗</button>
-
 <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-
     const produtos = [
   {
     "id": "1782457186",
@@ -64,10 +58,8 @@
     "img": "https://images.unsplash.com/photo-1591123109673-3f759501ac28?q=80&w=500"
   }
 ];
-
     const app = document.getElementById('app');
     let likesSalvos = JSON.parse(localStorage.getItem('kellen_likes')) || {};
-
     produtos.forEach(p => {
         const isLiked = likesSalvos[p.id] ? 'liked' : '';
         app.innerHTML += `
@@ -81,37 +73,18 @@
                 </div>
             </div>`;
     });
-
     function toggleLike(btn, id) {
         btn.classList.toggle('liked');
         likesSalvos[id] = btn.classList.contains('liked');
         localStorage.setItem('kellen_likes', JSON.stringify(likesSalvos));
     }
-
-    function postarComentario() {
-        const txt = document.getElementById('texto-comentario');
-        if(!txt.value.trim()) return;
-        let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
-        lista.unshift(txt.value);
-        localStorage.setItem('kellen_coments', JSON.stringify(lista));
-        txt.value = "";
-        renderComents();
-    }
-
     function renderComents() {
         const mural = document.getElementById('mural-comentarios');
         let lista = JSON.parse(localStorage.getItem('kellen_coments')) || [];
         mural.innerHTML = lista.map(c => `<div class="comentario-item">⭐ ${c}</div>`).join('');
     }
-
-    function compartilhar() {
-        if (navigator.share) navigator.share({ title: 'Kellen do Crochê', url: window.location.href });
-        else alert('Link copiado!');
-    }
-
     window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 300 ? "flex" : "none";
     renderComents();
-
     let slideIdx = 0;
     setInterval(() => {
         const c = document.getElementById('carousel');
