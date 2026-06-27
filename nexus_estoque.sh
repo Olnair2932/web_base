@@ -1,10 +1,12 @@
 #!/bin/bash
 RAIZ_WEB="/data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base"
 DB_PRODUTOS="$RAIZ_WEB/produtos.json"
+DB_COMER="$RAIZ_WEB/comentarios.json"
 INDEX_FILE="$RAIZ_WEB/index.html"
 
 [ ! -d "$RAIZ_WEB/img/carrossel" ] && mkdir -p "$RAIZ_WEB/img/carrossel"
 [ ! -f "$DB_PRODUTOS" ] && echo '[]' > "$DB_PRODUTOS"
+[ ! -f "$DB_COMER" ] && echo '[]' > "$DB_COMER"
 
 if [ "$#" -ne 3 ]; then
     echo -e "\033[1;31m[ERRO]\033[0m Uso: ./nexus_estoque.sh \"Nome\" \"Preço\" \"imagem.jpg\""
@@ -19,6 +21,7 @@ jq --arg id "$ID" --arg nm "$NOME" --arg pr "$PRECO" --arg im "$IMG_PATH" \
 '. += [{id: $id, nome: $nm, preco: ("R$ " + $pr), img: $im}]' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
 
 LISTA_JSON=$(cat "$DB_PRODUTOS")
+COMER_JSON=$(cat "$DB_COMER")
 
 SLIDES_HTML=""
 for f in img/carrossel/*; do
@@ -36,9 +39,6 @@ cat << EOT > "$INDEX_FILE"
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ff69b4">
     <link rel="manifest" href="manifest.json">
-    <meta property="og:title" content="Kellen do Crochê | Catálogo Oficial">
-    <meta property="og:description" content="Arte e Engenharia em cada ponto.">
-    <meta property="og:image" content="https://olnair2932.github.io/web_base/img/icon-512.png">
     <title>Kellen do Crochê</title>
     <style>
         :root { --bg: #ffc0cb; --card: white; --text: #333; --header: #ff69b4; --btn: #ff1493; }
@@ -54,6 +54,15 @@ cat << EOT > "$INDEX_FILE"
         .card img { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; }
         .preco { font-size: 24px; color: var(--btn); font-weight: bold; margin: 12px 0; }
         button { background: var(--btn); color: white; border: none; padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; }
+        
+        /* Seção de Comentários */
+        .feedback-section { max-width: 90%; margin: 20px auto; background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .feedback-title { color: var(--header); text-align: center; margin-bottom: 15px; font-size: 1.2rem; }
+        .comment-item { border-bottom: 1px dashed #eee; padding: 10px 0; margin-bottom: 10px; }
+        .comment-user { font-weight: bold; color: var(--btn); font-size: 0.9rem; }
+        .comment-text { font-style: italic; color: var(--text); font-size: 0.95rem; margin-top: 5px; }
+        .btn-comment { background: #25D366; margin-top: 15px; }
+
         .float-group { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
         .float-btn { border: none; border-radius: 50%; color: white; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         #darkBtn { background: #333; } #shareBtn { background: #4267B2; } #topBtn { background: #ff1493; display: none; }
@@ -63,12 +72,16 @@ cat << EOT > "$INDEX_FILE"
 <header><h1>Kellen do Crochê</h1><p>Arte e Engenharia em cada ponto 🧶</p></header>
 
 <div class="carousel-container">
-    <div class="carousel-slides" id="carousel">
-        $SLIDES_HTML
-    </div>
+    <div class="carousel-slides" id="carousel"> $SLIDES_HTML </div>
 </div>
 
 <section class="produtos" id="app"></section>
+
+<section class="feedback-section">
+    <h2 class="feedback-title">Recadinhos das Clientes 💖</h2>
+    <div id="comments-box"></div>
+    <button class="btn-comment" onclick="window.location.href='https://wa.me/5551984578173?text=Olá Kellen! Quero deixar um depoimento sobre meu crochê:'">Enviar meu depoimento</button>
+</section>
 
 <div class="float-group">
     <button id="darkBtn" class="float-btn" onclick="toggleDark()">🌙</button>
@@ -77,13 +90,13 @@ cat << EOT > "$INDEX_FILE"
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ativo!"));
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
     const produtos = $LISTA_JSON;
-    const app = document.getElementById('app');
+    const comentarios = $COMER_JSON;
 
+    // Renderizar Produtos
+    const app = document.getElementById('app');
     produtos.forEach(p => {
         app.innerHTML += \`
             <div class="card">
@@ -93,6 +106,20 @@ cat << EOT > "$INDEX_FILE"
                 <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20\${encodeURIComponent(p.nome)}'">Comprar</button>
             </div>\`;
     });
+
+    // Renderizar Comentários
+    const box = document.getElementById('comments-box');
+    if (comentarios.length === 0) {
+        box.innerHTML = "<p style='text-align:center; color:#999;'>Ainda não há recadinhos. Seja a primeira! ✨</p>";
+    } else {
+        comentarios.forEach(c => {
+            box.innerHTML += \`
+                <div class="comment-item">
+                    <div class="comment-user">👤 \${c.nome}</div>
+                    <div class="comment-text">"\${c.texto}"</div>
+                </div>\`;
+        });
+    }
 
     function toggleDark() { document.body.classList.toggle('dark'); }
     function compartilhar() { 
