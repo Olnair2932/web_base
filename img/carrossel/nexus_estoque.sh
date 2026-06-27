@@ -1,3 +1,36 @@
+#!/bin/bash
+RAIZ_WEB="/data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base"
+DB_PRODUTOS="$RAIZ_WEB/produtos.json"
+INDEX_FILE="$RAIZ_WEB/index.html"
+
+[ ! -d "$RAIZ_WEB/img/carrossel" ] && mkdir -p "$RAIZ_WEB/img/carrossel"
+[ ! -f "$DB_PRODUTOS" ] && echo '[]' > "$DB_PRODUTOS"
+
+if [ "$#" -ne 3 ]; then
+    echo -e "\033[1;31m[ERRO]\033[0m Uso: ./nexus_estoque.sh \"Nome\" \"Preço\" \"imagem.jpg\""
+    exit 1
+fi
+
+NOME=$1; PRECO=$2; IMG_INPUT=$3; ID=$(date +%s)
+IMG_PATH=$([[ $IMG_INPUT == http* ]] && echo "$IMG_INPUT" || echo "img/$IMG_INPUT")
+
+TMP=$(mktemp)
+jq --arg id "$ID" --arg nm "$NOME" --arg pr "$PRECO" --arg im "$IMG_PATH" \
+'. += [{id: $id, nome: $nm, preco: ("R$ " + $pr), img: $im}]' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
+
+LISTA_JSON=$(cat "$DB_PRODUTOS")
+
+# GERAÇÃO DINÂMICA DOS SLIDES DO CARROSSEL
+SLIDES_HTML=""
+for f in img/carrossel/*; do
+    if [ -f "$f" ]; then
+        SLIDES_HTML+="<div class='slide'><img src='$f'></div>"
+    fi
+done
+# Se a pasta estiver vazia, usa uma imagem padrão
+[ -z "$SLIDES_HTML" ] && SLIDES_HTML="<div class='slide'><img src='https://via.placeholder.com/800x250?text=Kellen+Crochê'></div>"
+
+cat << EOF > "$INDEX_FILE"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -32,7 +65,7 @@
 
 <div class="carousel-container">
     <div class="carousel-slides" id="carousel">
-        <div class='slide'><img src='https://via.placeholder.com/800x250?text=Kellen+Crochê'></div>
+        $SLIDES_HTML
     </div>
 </div>
 
@@ -45,36 +78,17 @@
 </div>
 
 <script>
-    const produtos = [
-  {
-    "id": "1782517360",
-    "nome": "Peça Exclusiva Kellen",
-    "preco": "R$ 155,00",
-    "img": "img/croche_real.webp"
-  },
-  {
-    "id": "1782537926",
-    "nome": "Crochê  Artesanal Premium",
-    "preco": "R$ 190,00",
-    "img": "img/nova_peca.jpg"
-  },
-  {
-    "id": "1782558566",
-    "nome": "Tapete Luxo Roxo",
-    "preco": "R$ 60,00",
-    "img": "img/img_9_1773760439513 (1).jpg"
-  }
-];
+    const produtos = $LISTA_JSON;
     const app = document.getElementById('app');
     
     produtos.forEach(p => {
-        app.innerHTML += `
+        app.innerHTML += \`
             <div class="card">
-                <img src="${p.img}" alt="${p.nome}" onerror="this.src='https://via.placeholder.com/300x220?text=Crochê'">
-                <h3>${p.nome}</h3>
-                <div class="preco">${p.preco}</div>
-                <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20${encodeURIComponent(p.nome)}'">Comprar</button>
-            </div>`;
+                <img src="\${p.img}" alt="\${p.nome}" onerror="this.src='https://via.placeholder.com/300x220?text=Crochê'">
+                <h3>\${p.nome}</h3>
+                <div class="preco">\${p.preco}</div>
+                <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20\${encodeURIComponent(p.nome)}'">Comprar</button>
+            </div>\`;
     });
 
     function toggleDark() { document.body.classList.toggle('dark'); }
@@ -86,9 +100,11 @@
     if(slides.length > 1) {
         setInterval(() => {
             slideIdx = (slideIdx + 1) % slides.length;
-            document.getElementById('carousel').style.transform = `translateX(-${slideIdx * 100}%)`;
+            document.getElementById('carousel').style.transform = \`translateX(-\${slideIdx * 100}%)\`;
         }, 4000);
     }
 </script>
 </body>
 </html>
+EOF
+cd $RAIZ_WEB && ./deploy.sh
