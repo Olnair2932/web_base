@@ -22,5 +22,11 @@
     "nome": "Crochê  Artesanal Premium",
     "preco": "R$ 190,00",
     "img": "img/nova_peca.jpg"
+  },
+  {
+    "id": "1782539766",
+    "nome": "Tapete de Crochê Luxo",
+    "preco": "R$ 140,00",
+    "img": "img/tapete_luxo.jpg"
   }
 ]
