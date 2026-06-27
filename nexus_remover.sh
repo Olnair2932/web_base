@@ -7,13 +7,17 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# Remove do JSON
+# 1. Remove do JSON
 TMP=$(mktemp)
 jq --arg nm "$1" 'del(.[] | select(.nome == $nm))' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
 
-# Dispara a reconstrução do HTML sem adicionar lixo
-# Usamos um truque: chamamos o estoque com um nome que o estoque já vai apagar em seguida
-./nexus_estoque.sh "TEMP_REBUILD" "0" "0"
-jq 'del(.[] | select(.nome == "TEMP_REBUILD"))' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
+# 2. Pega o último produto real para disparar a reconstrução do HTML sem lixo
+ULTIMO_NOME=$(jq -r '.[-1].nome' "$DB_PRODUTOS")
+ULTIMO_PRECO=$(jq -r '.[-1].preco' "$DB_PRODUTOS" | sed 's/R\$ //')
+ULTIMA_IMG=$(jq -r '.[-1].img' "$DB_PRODUTOS" | sed 's/img\///')
 
-echo "[SUCESSO] Item '$1' removido e site atualizado."
+# 3. Atualiza o site e remove a duplicata automática
+./nexus_estoque.sh "$ULTIMO_NOME" "$ULTIMO_PRECO" "$ULTIMA_IMG"
+jq 'del(.[] | select(.id == (map(.id|tonumber) | max | tostring)))' "$DB_PRODUTOS" > "$TMP" && mv "$TMP" "$DB_PRODUTOS"
+
+echo -e "\033[1;32m[SUCESSO]\033[0m Item '$1' removido e site limpo!"
