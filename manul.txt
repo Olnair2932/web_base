@@ -1,0 +1,12 @@
+
+
+Resumo de como usar agora:
+Para adicionar: ./nexus_estoque.sh "Nome" "Preço" "foto.jpg"
+
+
+Resumo de como usar agora:
+Para adicionar: ./nexus_estoque.sh "Nome" "Preço" "foto.jpg"
+
+
+Para adicionar: ./nexus_estoque.sh "Nome" "Preço" "foto.jpg"
+Para remover: ./nexus_remover.sh "Nome Exato
