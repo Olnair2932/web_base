@@ -1,0 +1,4 @@
+~/ia_termux/arsenal/scripts/web_base/nexus_estoque.sh "Manta Artesanal Premium" "190,00" "nova_peca.jpg"
+
+# Substitua 'NOME_DA_SUA_FOTO.jpg' pelo nome real do arquivo que está no seu download
+cp ~/storage/downloads/NOME_DA_SUA_FOTO.jpg ~/ia_termux/arsenal/scripts/web_base/img/nova_peca.jpg
