@@ -28,11 +28,5 @@
     "nome": "Centro de Mesa Encanto",
     "preco": "R$ 115,00",
     "img": "img/centro_de_mesa.jpg"
-  },
-  {
-    "id": "1782541753",
-    "nome": "REFRESH",
-    "preco": "R$ 0",
-    "img": "img/0"
   }
 ]
