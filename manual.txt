@@ -1,3 +1,6 @@
+./nexus_remover.sh "Nome do Produto Antigo"
+
+./nexus_estoque.sh "Tapete Luxo Bege" "145,00" "img_9_1773760439513 (1).jpg"
 Para inserir novos produtos, você deve usar o script principal nexus_estoque.sh.
 O formato do comando é:
 ./nexus_estoque.sh "Nome do Produto" "Preço" "nome_da_imagem.jpg"
@@ -34,3 +37,19 @@ Suponha que sua foto se chame foto_tapete.jpg. O comando para levar para a pasta
 cp ~/storage/dcim/Camera/foto_tapete.jpg ~/ia_termux/arsenal/scripts/web_base/img/
 
 
+./nexus_remover.sh "Nome do Produto Antigo"
+
+
+./nexus_estoque.sh "Tapete Luxo Bege" "145,00" "img_9_1773760439513 (1).jpg"
+
+
+
+Tudo funcionando perfeitamente! A Manta Artesanal Kellen foi removida tanto do banco de dados (JSON) quanto do site (HTML), e as alterações já foram enviadas para o seu GitHub.
+Sempre que você rodar o ./nexus_remover.sh, ele fará esse processo duplo de limpeza e atualização automática.
+Se quiser ver como está sua lista de produtos agora (para decidir se remove mais algum), rode:
+code
+Bash
+cat produtos.json | jq '.[] | .nome'
+Dica: Notei que você está organizando bem o estoque. Se em algum momento você quiser alterar o preço de um produto que já existe, o jeito mais fácil hoje é:
+Remover o produto com o ./nexus_remover.sh.
+Adicionar ele de novo com o ./nexus_estoque.sh usando o preço novo.
