@@ -1,10 +1,9 @@
 #!/bin/bash
-# NEXUS ESTOQUE v4.0 - Otimização WhatsApp Preview (SEO)
 RAIZ_WEB="/data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base"
 DB_PRODUTOS="$RAIZ_WEB/produtos.json"
 INDEX_FILE="$RAIZ_WEB/index.html"
 
-[ ! -d "$RAIZ_WEB/img" ] && mkdir -p "$RAIZ_WEB/img"
+[ ! -d "$RAIZ_WEB/img/carrossel" ] && mkdir -p "$RAIZ_WEB/img/carrossel"
 [ ! -f "$DB_PRODUTOS" ] && echo '[]' > "$DB_PRODUTOS"
 
 if [ "$#" -ne 3 ]; then
@@ -21,57 +20,55 @@ jq --arg id "$ID" --arg nm "$NOME" --arg pr "$PRECO" --arg im "$IMG_PATH" \
 
 LISTA_JSON=$(cat "$DB_PRODUTOS")
 
-# Reconstrução com META TAGS para WhatsApp
-cat << EOT > "$INDEX_FILE"
+# GERAÇÃO DINÂMICA DOS SLIDES DO CARROSSEL
+SLIDES_HTML=""
+for f in img/carrossel/*; do
+    if [ -f "$f" ]; then
+        SLIDES_HTML+="<div class='slide'><img src='$f'></div>"
+    fi
+done
+# Se a pasta estiver vazia, usa uma imagem padrão
+[ -z "$SLIDES_HTML" ] && SLIDES_HTML="<div class='slide'><img src='https://via.placeholder.com/800x250?text=Kellen+Crochê'></div>"
+
+cat << EOF > "$INDEX_FILE"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ff69b4">
-    
-    <!-- META TAGS DE ELITE (WhatsApp Preview) -->
     <meta property="og:title" content="Kellen do Crochê | Catálogo Oficial">
-    <meta property="og:description" content="Arte e Engenharia em cada ponto. Peças exclusivas feitas à mão pela Kellen.">
+    <meta property="og:description" content="Arte e Engenharia em cada ponto.">
     <meta property="og:image" content="https://olnair2932.github.io/web_base/img/nova_peca.jpg">
-    <meta property="og:url" content="https://olnair2932.github.io/web_base/">
-    <meta property="og:type" content="website">
-
-    <link rel="manifest" href="manifest.json">
-    <title>Kellen do Crochê | Catálogo Oficial</title>
+    <title>Kellen do Crochê</title>
     <style>
         :root { --bg: #ffc0cb; --card: white; --text: #333; --header: #ff69b4; --btn: #ff1493; }
         body.dark { --bg: #1a1a1a; --card: #2d2d2d; --text: #f0f0f0; --header: #b0467a; --btn: #ff69b4; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 120px; transition: 0.3s; overflow-x: hidden; }
-        header { background: var(--header); color: white; text-align: center; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .carousel-container { position: relative; max-width: 90%; margin: 15px auto; overflow: hidden; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: var(--card); }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 120px; transition: 0.3s; }
+        header { background: var(--header); color: white; text-align: center; padding: 25px; }
+        .carousel-container { position: relative; max-width: 95%; margin: 15px auto; overflow: hidden; border-radius: 20px; background: var(--card); }
         .carousel-slides { display: flex; transition: transform 0.6s ease-in-out; }
         .slide { min-width: 100%; }
-        .slide img { width: 100%; height: 250px; object-fit: cover; }
+        .slide img { width: 100%; height: 280px; object-fit: cover; }
         .produtos { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px; }
-        .card { background: var(--card); width: 320px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); padding: 15px; text-align: center; }
+        .card { background: var(--card); width: 320px; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .card img { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; }
         .preco { font-size: 24px; color: var(--btn); font-weight: bold; margin: 12px 0; }
         button { background: var(--btn); color: white; border: none; padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; }
-        
-        /* Ajuste de Ergonomia nos Botões Flutuantes */
         .float-group { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
-        .float-btn { border: none; border-radius: 50%; cursor: pointer; color: white; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        #darkBtn { background: #333; }
-        #shareBtn { background: #4267B2; }
-        #topBtn { background: #ff1493; display: none; }
-        
-        .btn-interacao { display: flex; gap: 8px; margin-top: 10px; }
-        .like-btn { background: var(--card); color: var(--btn); border: 2px solid var(--btn); flex: 0.3; border-radius: 12px; }
-        .like-btn.liked { background: var(--btn); color: white; }
+        .float-btn { border: none; border-radius: 50%; color: white; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #darkBtn { background: #333; } #shareBtn { background: #4267B2; } #topBtn { background: #ff1493; display: none; }
     </style>
 </head>
 <body>
 <header><h1>Kellen do Crochê</h1><p>Arte e Engenharia em cada ponto 🧶</p></header>
-<div class="carousel-container"><div class="carousel-slides" id="carousel">
-    <div class="slide"><img src="https://images.unsplash.com/photo-1621419350937-be418043685f?q=80&w=800"></div>
-    <div class="slide"><img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=800"></div>
-</div></div>
+
+<div class="carousel-container">
+    <div class="carousel-slides" id="carousel">
+        $SLIDES_HTML
+    </div>
+</div>
+
 <section class="produtos" id="app"></section>
 
 <div class="float-group">
@@ -81,56 +78,33 @@ cat << EOT > "$INDEX_FILE"
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     const produtos = $LISTA_JSON;
     const app = document.getElementById('app');
-    let likesSalvos = JSON.parse(localStorage.getItem('kellen_likes')) || {};
-
+    
     produtos.forEach(p => {
-        const isLiked = likesSalvos[p.id] ? 'liked' : '';
         app.innerHTML += \`
             <div class="card">
-                <img src="\${p.img}" alt="\${p.nome}" onerror="this.src='https://via.placeholder.com/300x220?text=Crochê+Exclusivo'">
+                <img src="\${p.img}" alt="\${p.nome}" onerror="this.src='https://via.placeholder.com/300x220?text=Crochê'">
                 <h3>\${p.nome}</h3>
                 <div class="preco">\${p.preco}</div>
-                <div class="btn-interacao">
-                    <button class="like-btn \${isLiked}" onclick="toggleLike(this, '\${p.id}')">♥</button>
-                    <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero%20encomendar:%20\${encodeURIComponent(p.nome)}'">Comprar</button>
-                </div>
+                <button onclick="window.location.href='https://wa.me/5551984578173?text=Olá!%20Quero:%20\${encodeURIComponent(p.nome)}'">Comprar</button>
             </div>\`;
     });
 
-    function toggleDark() {
-        document.body.classList.toggle('dark');
-        const isDark = document.body.classList.contains('dark');
-        localStorage.setItem('kellen_dark', isDark);
-        document.getElementById('darkBtn').innerText = isDark ? '☀️' : '🌙';
-    }
-    if(localStorage.getItem('kellen_dark') === 'true') toggleDark();
-
-    function toggleLike(btn, id) {
-        btn.classList.toggle('liked');
-        likesSalvos[id] = btn.classList.contains('liked');
-        localStorage.setItem('kellen_likes', JSON.stringify(likesSalvos));
-    }
-
-    function compartilhar() {
-        if (navigator.share) navigator.share({ title: 'Kellen do Crochê', url: window.location.href });
-        else { navigator.clipboard.writeText(window.location.href); alert('Link copiado!'); }
-    }
-
+    function toggleDark() { document.body.classList.toggle('dark'); }
+    function compartilhar() { navigator.share({ title: 'Kellen Crochê', url: window.location.href }); }
     window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 300 ? "flex" : "none";
 
     let slideIdx = 0;
-    setInterval(() => {
-        const c = document.getElementById('carousel');
-        if(c) { slideIdx = (slideIdx + 1) % 2; c.style.transform = \`translateX(-\${slideIdx * 100}%)\`; }
-    }, 4000);
+    const slides = document.querySelectorAll('.slide');
+    if(slides.length > 1) {
+        setInterval(() => {
+            slideIdx = (slideIdx + 1) % slides.length;
+            document.getElementById('carousel').style.transform = \`translateX(-\${slideIdx * 100}%)\`;
+        }, 4000);
+    }
 </script>
 </body>
 </html>
-EOT
-# Sincroniza o limpador com o novo layout de botões
-cp /data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base/nexus_estoque.sh /data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base/nexus_limpar.sh
-sed -i 's/NOME=$1; PRECO=$2; IMG_INPUT=$3; ID=$(date +%s)/#Limpador/g' /data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base/nexus_limpar.sh
+EOF
 cd $RAIZ_WEB && ./deploy.sh
