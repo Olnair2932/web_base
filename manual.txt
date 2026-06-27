@@ -1,0 +1,36 @@
+Para inserir novos produtos, você deve usar o script principal nexus_estoque.sh.
+O formato do comando é:
+./nexus_estoque.sh "Nome do Produto" "Preço" "nome_da_imagem.jpg"
+Exemplos práticos:
+1. Se a imagem já estiver na pasta img do seu projeto:
+
+./nexus_estoque.sh "Passadeira Floral" "150,00" "passadeira.jpg"
+
+2. Se quiser usar uma imagem da internet (URL):
+
+./nexus_estoque.sh "Jogo de Cozinha" "280,00" "https://link-da-foto.com/imagem.jpg"
+
+Observações importantes:
+Aspas: Use sempre aspas no Nome e no Preço para evitar erros se houver espaços.
+Preço: Não precisa colocar "R$", o script já adiciona automaticamente. Use apenas o valor (ex: 89,90 ou 89.90).
+Imagens Locais: Se você tirar uma foto com o celular, você deve mover o arquivo para a pasta /data/data/com.termux/files/home/ia_termux/arsenal/scripts/web_base/img/
+
+
+
+Para mover as fotos da galeria do seu celular para a pasta do site no Termux, siga estes passos:
+1. Dar permissão de acesso ao armazenamento
+Se você ainda não fez isso, o Termux precisa de permissão para ler seus arquivos:
+code
+Bash
+termux-setup-storage
+Vai aparecer uma janela no celular, clique em "Permitir".
+2. Onde as fotos costumam ficar
+No Termux, após o comando acima, sua galeria (Câmera) geralmente fica em:
+~/storage/dcim/Camera/
+3.
+
+Suponha que sua foto se chame foto_tapete.jpg. O comando para levar para a pasta do site é:
+
+cp ~/storage/dcim/Camera/foto_tapete.jpg ~/ia_termux/arsenal/scripts/web_base/img/
+
+
