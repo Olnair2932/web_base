@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ff69b4">
+    <link rel="manifest" href="manifest.json">
     <meta property="og:title" content="Kellen do Crochê | Catálogo Oficial">
     <meta property="og:description" content="Arte e Engenharia em cada ponto.">
-    <meta property="og:image" content="https://olnair2932.github.io/web_base/img/nova_peca.jpg">
+    <meta property="og:image" content="https://olnair2932.github.io/web_base/img/icon-512.png">
     <title>Kellen do Crochê</title>
     <style>
         :root { --bg: #ffc0cb; --card: white; --text: #333; --header: #ff69b4; --btn: #ff1493; }
@@ -45,6 +46,10 @@
 </div>
 
 <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ativo!"));
+    }
+
     const produtos = [
   {
     "id": "1782537926",
@@ -65,14 +70,14 @@
     "img": "img/img_9_1773760439513 (1).jpg"
   },
   {
-    "id": "1782560923",
+    "id": "1782566307",
     "nome": "Tapete Luxo Roxo",
     "preco": "R$ 60,00",
     "img": "img/img_9_1773760439513 (1).jpg"
   }
 ];
     const app = document.getElementById('app');
-    
+
     produtos.forEach(p => {
         app.innerHTML += `
             <div class="card">
@@ -84,7 +89,10 @@
     });
 
     function toggleDark() { document.body.classList.toggle('dark'); }
-    function compartilhar() { navigator.share({ title: 'Kellen Crochê', url: window.location.href }); }
+    function compartilhar() { 
+        if (navigator.share) navigator.share({ title: 'Kellen Crochê', url: window.location.href });
+        else { navigator.clipboard.writeText(window.location.href); alert('Link copiado!'); }
+    }
     window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 300 ? "flex" : "none";
 
     let slideIdx = 0;

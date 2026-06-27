@@ -20,26 +20,25 @@ jq --arg id "$ID" --arg nm "$NOME" --arg pr "$PRECO" --arg im "$IMG_PATH" \
 
 LISTA_JSON=$(cat "$DB_PRODUTOS")
 
-# GERAÇÃO DINÂMICA DOS SLIDES DO CARROSSEL
 SLIDES_HTML=""
 for f in img/carrossel/*; do
     if [ -f "$f" ]; then
         SLIDES_HTML+="<div class='slide'><img src='$f'></div>"
     fi
 done
-# Se a pasta estiver vazia, usa uma imagem padrão
 [ -z "$SLIDES_HTML" ] && SLIDES_HTML="<div class='slide'><img src='https://via.placeholder.com/800x250?text=Kellen+Crochê'></div>"
 
-cat << EOF > "$INDEX_FILE"
+cat << EOT > "$INDEX_FILE"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ff69b4">
+    <link rel="manifest" href="manifest.json">
     <meta property="og:title" content="Kellen do Crochê | Catálogo Oficial">
     <meta property="og:description" content="Arte e Engenharia em cada ponto.">
-    <meta property="og:image" content="https://olnair2932.github.io/web_base/img/nova_peca.jpg">
+    <meta property="og:image" content="https://olnair2932.github.io/web_base/img/icon-512.png">
     <title>Kellen do Crochê</title>
     <style>
         :root { --bg: #ffc0cb; --card: white; --text: #333; --header: #ff69b4; --btn: #ff1493; }
@@ -78,9 +77,13 @@ cat << EOF > "$INDEX_FILE"
 </div>
 
 <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ativo!"));
+    }
+
     const produtos = $LISTA_JSON;
     const app = document.getElementById('app');
-    
+
     produtos.forEach(p => {
         app.innerHTML += \`
             <div class="card">
@@ -92,7 +95,10 @@ cat << EOF > "$INDEX_FILE"
     });
 
     function toggleDark() { document.body.classList.toggle('dark'); }
-    function compartilhar() { navigator.share({ title: 'Kellen Crochê', url: window.location.href }); }
+    function compartilhar() { 
+        if (navigator.share) navigator.share({ title: 'Kellen Crochê', url: window.location.href });
+        else { navigator.clipboard.writeText(window.location.href); alert('Link copiado!'); }
+    }
     window.onscroll = () => document.getElementById("topBtn").style.display = window.scrollY > 300 ? "flex" : "none";
 
     let slideIdx = 0;
@@ -106,5 +112,5 @@ cat << EOF > "$INDEX_FILE"
 </script>
 </body>
 </html>
-EOF
+EOT
 cd $RAIZ_WEB && ./deploy.sh
