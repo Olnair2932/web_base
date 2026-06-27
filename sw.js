@@ -1,34 +1,32 @@
-const CACHE_NAME = 'kellen-croche-v2'; // Versão incrementada para forçar atualização
+const CACHE_NAME = 'kellen-croche-v4';
 const assets = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './img/icon-192.png',
+  './img/icon-512.png'
 ];
 
-// Instalação
+// Instalação e Cache inicial
 self.addEventListener('install', event => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
   );
 });
 
-// Limpeza de Caches Antigos (Resolve o erro "App Parou")
+// Ativação e Limpeza
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      );
-    })
+    caches.keys().then(keys => Promise.all(
+      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+    ))
   );
 });
 
-// Resposta
+// Estratégia: Network First (Tenta internet, se falhar usa cache)
+// Ideal para catálogos que mudam preços sempre!
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    }).catch(() => caches.match('./index.html'))
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
